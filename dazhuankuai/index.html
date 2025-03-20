@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打砖块游戏</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="ui-overlay">
+            <div class="score-display">分数: <span id="score">0</span></div>
+            <div class="combo-display"><span id="combo-multiplier">1</span>x</div>
+            <div class="paddle-power"><div id="paddle-power-bar"></div></div>
+        </div>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="gameOverModal" class="modal">
+            <div class="modal-content">
+                <h2>游戏结束</h2>
+                <p>最终分数: <span id="final-score">0</span></p>
+                <p>最高分数: <span id="high-score">0</span></p>
+                <button id="restartButton">重新开始</button>
+            </div>
+        </div>
+    </div>
+    <!-- 游戏音效库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+    <!-- 游戏脚本 -->
+    <script src="js/utils.js"></script>
+    <script src="js/effects.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html> 
