@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>俄罗斯方块游戏</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="game-info">
+            <h1>俄罗斯方块</h1>
+            <div class="score-container">
+                <p>分数: <span id="score">0</span></p>
+                <p>等级: <span id="level">1</span></p>
+                <p>已消行数: <span id="lines">0</span></p>
+            </div>
+            <div class="next-piece-container">
+                <h2>下一个方块</h2>
+                <div id="next-piece"></div>
+            </div>
+            <div class="controls">
+                <button id="start-btn">开始游戏</button>
+                <button id="pause-btn">暂停游戏</button>
+                <button id="restart-btn">重新开始</button>
+            </div>
+            <div class="instructions">
+                <h2>游戏说明</h2>
+                <p>↑ 旋转方块</p>
+                <p>← → 左右移动</p>
+                <p>↓ 加速下落</p>
+                <p>空格 直接下落到底部</p>
+            </div>
+        </div>
+        <div class="game-board-container">
+            <div id="game-board"></div>
+        </div>
+    </div>
+    
+    <!-- 游戏开始介绍面板 -->
+    <div id="intro-panel" class="intro-panel">
+        <div class="intro-content">
+            <h2>欢迎来到俄罗斯方块!</h2>
+            <p>经典的俄罗斯方块游戏，带有精美动画效果</p>
+            <div class="tetris-mini-preview">
+                <div class="piece-preview piece-I"></div>
+                <div class="piece-preview piece-J"></div>
+                <div class="piece-preview piece-L"></div>
+                <div class="piece-preview piece-O"></div>
+                <div class="piece-preview piece-S"></div>
+                <div class="piece-preview piece-T"></div>
+                <div class="piece-preview piece-Z"></div>
+            </div>
+            <button id="start-game-intro">开始游戏</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

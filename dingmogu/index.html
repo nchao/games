@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超级马里奥 - 顶蘑菇</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #87CEEB;
+            font-family: 'Press Start 2P', Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            background-color: #5C94FC;
+            border: 4px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        #background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%235C94FC"/><circle cx="20" cy="20" r="15" fill="%23FFFFFF" fill-opacity="0.3"/><circle cx="80" cy="30" r="10" fill="%23FFFFFF" fill-opacity="0.3"/><circle cx="50" cy="70" r="8" fill="%23FFFFFF" fill-opacity="0.3"/><circle cx="70" cy="80" r="12" fill="%23FFFFFF" fill-opacity="0.3"/></svg>');
+            background-repeat: repeat;
+            z-index: 0;
+        }
+        
+        #clouds {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100px;
+            background-image: 
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100" viewBox="0 0 200 100"><path d="M30,50 Q40,40 50,50 Q60,35 70,50 Q80,30 100,50 Q110,40 120,50 Q130,35 140,50 Q150,45 160,50 Q170,35 180,50 L180,100 L30,100 Z" fill="%23FFFFFF" fill-opacity="0.7"/></svg>');
+            background-repeat: repeat-x;
+            animation: cloudMove 30s linear infinite;
+            z-index: 1;
+        }
+        
+        @keyframes cloudMove {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+        
+        #score-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 100;
+        }
+        
+        #game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            display: none;
+        }
+        
+        #game-over h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        #game-over button {
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #game-over button:hover {
+            background-color: #45a049;
+        }
+        
+        #player {
+            position: absolute;
+            width: 50px;
+            height: 70px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140"><path d="M20,50 C20,30 80,30 80,50 L80,90 C80,115 20,115 20,90 Z" fill="%23FF0000"/><rect x="30" y="10" width="40" height="40" rx="5" fill="%23FF0000"/><circle cx="35" cy="30" r="7" fill="%23FFFFFF"/><circle cx="65" cy="30" r="7" fill="%23FFFFFF"/><circle cx="35" cy="30" r="3" fill="%23000000"/><circle cx="65" cy="30" r="3" fill="%23000000"/><path d="M40,45 C50,55 60,45 60,45" stroke="%23FFFFFF" stroke-width="3" fill="none"/><rect x="10" y="70" width="20" height="30" rx="5" fill="%230000FF"/><rect x="70" y="70" width="20" height="30" rx="5" fill="%230000FF"/><rect x="25" y="110" width="20" height="30" rx="5" fill="%23A52A2A"/><rect x="55" y="110" width="20" height="30" rx="5" fill="%23A52A2A"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            bottom: 50px;
+            left: 375px;
+            z-index: 10;
+        }
+        
+        .mushroom {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 5;
+        }
+        
+        .mushroom-normal {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23E53935"/><circle cx="50" cy="50" r="35" fill="%23FFEBEE"/><circle cx="35" cy="40" r="8" fill="%23FFF"/><circle cx="65" cy="40" r="8" fill="%23FFF"/><rect x="35" y="65" width="30" height="5" rx="2" fill="%23FFEBEE"/></svg>');
+        }
+        
+        .mushroom-special {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%234CAF50"/><circle cx="50" cy="50" r="35" fill="%23E8F5E9"/><circle cx="35" cy="40" r="8" fill="%23FFF"/><circle cx="65" cy="40" r="8" fill="%23FFF"/><rect x="35" y="65" width="30" height="5" rx="2" fill="%23E8F5E9"/></svg>');
+        }
+        
+        .mushroom-poison {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%239C27B0"/><circle cx="50" cy="50" r="35" fill="%23F3E5F5"/><circle cx="35" cy="40" r="8" fill="%23FFF"/><circle cx="65" cy="40" r="8" fill="%23FFF"/><rect x="35" y="65" width="30" height="5" rx="2" fill="%23F3E5F5"/></svg>');
+        }
+        
+        #ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #8B4513;
+            border-top: 5px solid #5D4037;
+            z-index: 1;
+        }
+        
+        /* 草地装饰 */
+        .grass {
+            position: absolute;
+            bottom: 50px;
+            width: 20px;
+            height: 15px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 15"><path d="M0,15 L5,0 L10,10 L15,0 L20,15 Z" fill="%233CB371"/></svg>');
+            background-repeat: no-repeat;
+            background-size: cover;
+            z-index: 2;
+        }
+        
+        #timer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 100;
+        }
+        
+        #start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+        }
+        
+        #start-screen h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        #start-screen p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            max-width: 80%;
+            line-height: 1.5;
+        }
+        
+        #start-screen button {
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 0 10px;
+        }
+        
+        #start-screen button:hover {
+            background-color: #45a049;
+        }
+        
+        /* 难度选择器 */
+        #difficulty-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .difficulty-btn {
+            padding: 10px 20px;
+            margin: 0 5px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .difficulty-btn.active {
+            background-color: #FF5722;
+            font-weight: bold;
+        }
+        
+        .difficulty-btn:hover {
+            background-color: #0b7dda;
+        }
+        
+        /* 连击系统显示 */
+        #combo-display {
+            position: absolute;
+            bottom: 60px;
+            right: 10px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 100;
+            display: none;
+        }
+        
+        /* 成就解锁通知 */
+        #achievement {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background-color: rgba(255, 215, 0, 0.8);
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 150;
+            display: none;
+            animation: achievementPopup 3s forwards;
+        }
+        
+        @keyframes achievementPopup {
+            0% { opacity: 0; transform: translate(-50%, -20px); }
+            10% { opacity: 1; transform: translate(-50%, 0); }
+            80% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -20px); }
+        }
+        
+        /* 高分榜 */
+        #high-scores {
+            position: absolute;
+            top: 10px;
+            right: 120px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 100;
+            cursor: pointer;
+        }
+        
+        #high-scores-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            z-index: 400;
+            display: none;
+        }
+        
+        #high-scores-panel h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+        
+        #high-scores-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        #high-scores-list li {
+            padding: 8px;
+            margin-bottom: 5px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+        }
+        
+        #high-scores-panel button {
+            display: block;
+            margin: 10px auto 0;
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* 顶部和底部的装饰管道 */
+        .pipe {
+            position: absolute;
+            width: 80px;
+            height: 100px;
+            background-color: #00AA00;
+            border: 4px solid #006600;
+            z-index: 3;
+        }
+        
+        .pipe-top {
+            top: -60px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        
+        /* 简单的动画效果 */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .bounce {
+            animation: bounce 0.3s;
+        }
+        
+        /* 跳跃动画 */
+        @keyframes jump {
+            0%, 100% { bottom: 50px; }
+            50% { bottom: 100px; }
+        }
+        
+        .jump {
+            animation: jump 0.5s;
+        }
+        
+        /* 得分动画 */
+        @keyframes scorePopup {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-50px); }
+        }
+        
+        .score-popup {
+            position: absolute;
+            color: gold;
+            font-weight: bold;
+            font-size: 24px;
+            text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            animation: scorePopup 1s forwards;
+            z-index: 150;
+        }
+        
+        /* 游戏结束屏幕的彩色烟花效果 */
+        @keyframes firework {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+        }
+        
+        .firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            pointer-events: none;
+            z-index: 210;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="background"></div>
+        <div id="clouds"></div>
+        
+        <div id="score-container">得分: <span id="score">0</span></div>
+        <div id="timer">时间: <span id="time">60</span>秒</div>
+        <div id="high-scores">最高分: <span id="high-score">0</span></div>
+        <div id="combo-display">连击: <span id="combo-counter">0</span>x</div>
+        <div id="achievement">成就解锁: <span id="achievement-text"></span></div>
+        
+        <!-- 高分榜面板 -->
+        <div id="high-scores-panel">
+            <h2>最高分榜</h2>
+            <ol id="high-scores-list"></ol>
+            <button id="close-high-scores">关闭</button>
+        </div>
+        
+        <!-- 装饰性管道 -->
+        <div class="pipe pipe-top" style="left: 50px;"></div>
+        <div class="pipe pipe-top" style="right: 50px;"></div>
+        
+        <div id="player"></div>
+        <div id="ground"></div>
+        
+        <div id="game-over">
+            <h1>游戏结束!</h1>
+            <p>你的最终得分: <span id="final-score">0</span></p>
+            <button id="restart-button">再玩一次</button>
+        </div>
+        
+        <div id="start-screen">
+            <h1>超级马里奥 - 顶蘑菇</h1>
+            <p>使用←和→键移动马里奥，从下方顶到不同的蘑菇获得分数：<br>
+               红色蘑菇: +1分<br>
+               绿色蘑菇: +3分<br>
+               紫色蘑菇: -2分<br>
+               连续顶到蘑菇可以获得连击加成！<br>
+               空格键可以暂停游戏。
+            </p>
+            
+            <div id="difficulty-selector">
+                <button class="difficulty-btn active" data-difficulty="easy">简单</button>
+                <button class="difficulty-btn" data-difficulty="normal">普通</button>
+                <button class="difficulty-btn" data-difficulty="hard">困难</button>
+            </div>
+            
+            <button id="start-button">开始游戏</button>
+        </div>
+    </div>
+
+    <script>
+        // 游戏变量
+        let score = 0;
+        let gameTime = 60;
+        let gameInterval;
+        let timerInterval;
+        let isGameRunning = false;
+        let playerSpeed = 5;
+        let mushroomSpeed = 2;
+        let playerPosition = 375;
+        let mushrooms = [];
+        let keys = {};
+        let isPaused = false;
+        let comboCount = 0;
+        let comboTimer = null;
+        let difficulty = 'easy';
+        let achievements = JSON.parse(localStorage.getItem('achievements')) || {};
+        
+        // 高分榜
+        let highScores = JSON.parse(localStorage.getItem('highScores')) || {
+            easy: [],
+            normal: [],
+            hard: []
+        };
+        let highScore = localStorage.getItem(`highScore_${difficulty}`) || 0;
+        
+        // 难度设置
+        const difficultySettings = {
+            easy: {
+                mushroomSpeed: 2,
+                spawnRate: 0.02,
+                maxMushrooms: 8,
+                playerSpeed: 5,
+                poisonWeight: 0.1
+            },
+            normal: {
+                mushroomSpeed: 3,
+                spawnRate: 0.03,
+                maxMushrooms: 10,
+                playerSpeed: 6,
+                poisonWeight: 0.15
+            },
+            hard: {
+                mushroomSpeed: 4,
+                spawnRate: 0.04,
+                maxMushrooms: 12,
+                playerSpeed: 7,
+                poisonWeight: 0.2
+            }
+        };
+        
+        // 成就列表
+        const achievementsList = {
+            firstMushroom: {
+                name: "初次收获",
+                description: "顶到第一个蘑菇",
+                check: (score) => score >= 1
+            },
+            score10: {
+                name: "新手",
+                description: "得分达到10分",
+                check: (score) => score >= 10
+            },
+            score50: {
+                name: "蘑菇收集者",
+                description: "得分达到50分",
+                check: (score) => score >= 50
+            },
+            score100: {
+                name: "蘑菇大师",
+                description: "得分达到100分",
+                check: (score) => score >= 100
+            },
+            combo5: {
+                name: "连击手",
+                description: "达成5连击",
+                check: (combo) => combo >= 5
+            },
+            combo10: {
+                name: "连击专家",
+                description: "达成10连击",
+                check: (combo) => combo >= 10
+            }
+        };
+        
+        // 音效
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // 获取DOM元素
+        const gameContainer = document.getElementById('game-container');
+        const player = document.getElementById('player');
+        const scoreElement = document.getElementById('score');
+        const finalScoreElement = document.getElementById('final-score');
+        const timeElement = document.getElementById('time');
+        const gameOverScreen = document.getElementById('game-over');
+        const startScreen = document.getElementById('start-screen');
+        const startButton = document.getElementById('start-button');
+        const restartButton = document.getElementById('restart-button');
+        const ground = document.getElementById('ground');
+        const comboDisplay = document.getElementById('combo-display');
+        const comboCounter = document.getElementById('combo-counter');
+        const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+        const highScoreElement = document.getElementById('high-score');
+        const highScoresPanel = document.getElementById('high-scores-panel');
+        const highScoresList = document.getElementById('high-scores-list');
+        const highScoresBtn = document.getElementById('high-scores');
+        const closeHighScoresBtn = document.getElementById('close-high-scores');
+        const achievementElement = document.getElementById('achievement');
+        const achievementText = document.getElementById('achievement-text');
+        
+        // 初始化高分显示
+        updateHighScoreDisplay();
+        
+        // 添加事件监听器
+        startButton.addEventListener('click', startGame);
+        restartButton.addEventListener('click', startGame);
+        highScoresBtn.addEventListener('click', toggleHighScores);
+        closeHighScoresBtn.addEventListener('click', toggleHighScores);
+        
+        // 难度选择按钮
+        difficultyBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                difficulty = btn.dataset.difficulty;
+                
+                // 更新按钮样式
+                difficultyBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // 更新高分显示
+                highScore = localStorage.getItem(`highScore_${difficulty}`) || 0;
+                updateHighScoreDisplay();
+            });
+        });
+        
+        // 键盘控制
+        document.addEventListener('keydown', (event) => {
+            keys[event.key] = true;
+            
+            // 按下空格键暂停/继续游戏
+            if (event.key === ' ' && isGameRunning) {
+                togglePause();
+            }
+        });
+        
+        document.addEventListener('keyup', (event) => {
+            keys[event.key] = false;
+        });
+        
+        // 更新高分显示
+        function updateHighScoreDisplay() {
+            highScoreElement.textContent = highScore;
+        }
+        
+        // 更新高分榜
+        function updateHighScoresList() {
+            // 清空当前列表
+            highScoresList.innerHTML = '';
+            
+            // 获取当前难度的高分
+            const scores = highScores[difficulty];
+            
+            if (scores.length === 0) {
+                const li = document.createElement('li');
+                li.textContent = '还没有记录';
+                highScoresList.appendChild(li);
+            } else {
+                // 显示前5个高分
+                scores.slice(0, 5).forEach((scoreItem, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${index + 1}. ${scoreItem.score}分 (${new Date(scoreItem.date).toLocaleDateString()})`;
+                    highScoresList.appendChild(li);
+                });
+            }
+        }
+        
+        // 切换高分榜显示
+        function toggleHighScores() {
+            const isVisible = highScoresPanel.style.display === 'block';
+            highScoresPanel.style.display = isVisible ? 'none' : 'block';
+            
+            if (!isVisible) {
+                updateHighScoresList();
+            }
+        }
+        
+        // 检查并解锁成就
+        function checkAchievements(scoreVal, comboVal) {
+            for (const [id, achievement] of Object.entries(achievementsList)) {
+                // 如果成就尚未解锁
+                if (!achievements[id]) {
+                    // 基于分数的成就
+                    if (id.includes('score') && achievement.check(scoreVal)) {
+                        unlockAchievement(id, achievement.name);
+                    }
+                    // 基于连击的成就
+                    else if (id.includes('combo') && achievement.check(comboVal)) {
+                        unlockAchievement(id, achievement.name);
+                    }
+                }
+            }
+        }
+        
+        // 解锁成就
+        function unlockAchievement(id, name) {
+            achievements[id] = true;
+            localStorage.setItem('achievements', JSON.stringify(achievements));
+            
+            // 显示成就解锁通知
+            achievementText.textContent = name;
+            achievementElement.style.display = 'block';
+            
+            // 播放特殊音效
+            playAchievementSound();
+            
+            // 3秒后隐藏通知
+            setTimeout(() => {
+                achievementElement.style.display = 'none';
+            }, 3000);
+        }
+        
+        // 播放成就解锁音效
+        function playAchievementSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.type = 'triangle';
+            
+            // 创建上升音阶的音效
+            oscillator.frequency.setValueAtTime(330, audioContext.currentTime);
+            oscillator.frequency.linearRampToValueAtTime(660, audioContext.currentTime + 0.2);
+            oscillator.frequency.setValueAtTime(880, audioContext.currentTime + 0.3);
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+        
+        // 连击系统
+        function startComboTimer() {
+            // 清除之前的计时器
+            if (comboTimer) {
+                clearTimeout(comboTimer);
+            }
+            
+            // 2秒内没有新的碰撞就重置连击
+            comboTimer = setTimeout(() => {
+                comboCount = 0;
+                comboDisplay.style.display = 'none';
+            }, 2000);
+        }
+        
+        // 创建草地装饰
+        function createGrass() {
+            for (let i = 0; i < 30; i++) {
+                const grass = document.createElement('div');
+                grass.className = 'grass';
+                grass.style.left = (Math.random() * gameContainer.clientWidth) + 'px';
+                gameContainer.appendChild(grass);
+            }
+        }
+        
+        // 创建装饰烟花
+        function createFirework(x, y, color) {
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.style.left = x + 'px';
+            firework.style.top = y + 'px';
+            firework.style.backgroundColor = color;
+            firework.style.animation = `firework ${0.5 + Math.random() * 0.5}s forwards`;
+            
+            gameContainer.appendChild(firework);
+            
+            firework.addEventListener('animationend', () => {
+                if (firework.parentNode) {
+                    firework.parentNode.removeChild(firework);
+                }
+            });
+        }
+        
+        // 创建一系列烟花
+        function createFireworks() {
+            const colors = ['#FF5252', '#FFEB3B', '#4CAF50', '#2196F3', '#9C27B0', '#FF9800'];
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * gameContainer.clientWidth;
+                    const y = Math.random() * gameContainer.clientHeight;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    createFirework(x, y, color);
+                }, i * 200);
+            }
+        }
+        
+        // 切换暂停状态
+        function togglePause() {
+            isPaused = !isPaused;
+            
+            if (isPaused) {
+                clearInterval(gameInterval);
+                clearInterval(timerInterval);
+            } else {
+                gameInterval = setInterval(gameLoop, 1000 / 60);
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+        }
+        
+        // 游戏主循环
+        function gameLoop() {
+            if (isPaused) return;
+            
+            const currentSettings = difficultySettings[difficulty];
+            
+            // 移动玩家
+            if (keys['ArrowLeft'] && playerPosition > 0) {
+                playerPosition -= currentSettings.playerSpeed;
+            }
+            if (keys['ArrowRight'] && playerPosition < gameContainer.clientWidth - player.clientWidth) {
+                playerPosition += currentSettings.playerSpeed;
+            }
+            
+            player.style.left = playerPosition + 'px';
+            
+            // 移动蘑菇
+            for (let i = mushrooms.length - 1; i >= 0; i--) {
+                const mushroom = mushrooms[i];
+                const mushroomElement = document.getElementById(`mushroom-${i}`);
+                
+                if (mushroomElement) {
+                    mushroom.y += currentSettings.mushroomSpeed;
+                    mushroomElement.style.top = mushroom.y + 'px';
+                    
+                    // 检测碰撞
+                    if (detectCollision(player, mushroomElement)) {
+                        handleCollision(mushroom, i);
+                    }
+                    
+                    // 删除离开屏幕的蘑菇
+                    if (mushroom.y > gameContainer.clientHeight) {
+                        if (mushroomElement.parentNode) {
+                            mushroomElement.parentNode.removeChild(mushroomElement);
+                        }
+                        mushrooms.splice(i, 1);
+                    }
+                }
+            }
+            
+            // 随机生成新蘑菇
+            if (Math.random() < currentSettings.spawnRate && mushrooms.length < currentSettings.maxMushrooms) {
+                createMushroom();
+            }
+        }
+        
+        // 检测碰撞
+        function detectCollision(player, mushroom) {
+            const playerRect = player.getBoundingClientRect();
+            const mushroomRect = mushroom.getBoundingClientRect();
+            
+            // 只有当玩家从下方顶到蘑菇才算碰撞
+            return (
+                playerRect.left < mushroomRect.right &&
+                playerRect.right > mushroomRect.left &&
+                playerRect.top < mushroomRect.bottom &&
+                playerRect.top > mushroomRect.bottom - 20
+            );
+        }
+        
+        // 处理碰撞
+        function handleCollision(mushroom, index) {
+            const mushroomElement = document.getElementById(`mushroom-${index}`);
+            if (mushroomElement) {
+                // 为蘑菇添加弹跳动画
+                mushroomElement.classList.add('bounce');
+                
+                // 为玩家添加跳跃动画
+                player.classList.add('jump');
+                setTimeout(() => {
+                    player.classList.remove('jump');
+                }, 500);
+                
+                // 播放音效
+                playSound(mushroom.type);
+                
+                // 根据蘑菇类型增加分数
+                let points = 0;
+                switch (mushroom.type) {
+                    case 'normal':
+                        points = 1;
+                        break;
+                    case 'special':
+                        points = 3;
+                        break;
+                    case 'poison':
+                        points = -2;
+                        // 中毒时重置连击
+                        comboCount = 0;
+                        comboDisplay.style.display = 'none';
+                        if (comboTimer) {
+                            clearTimeout(comboTimer);
+                        }
+                        break;
+                }
+                
+                // 如果不是毒蘑菇，增加连击
+                if (mushroom.type !== 'poison') {
+                    comboCount++;
+                    comboCounter.textContent = comboCount;
+                    comboDisplay.style.display = 'block';
+                    
+                    // 连击加成
+                    if (comboCount >= 3) {
+                        const comboBonus = Math.floor(comboCount / 3);
+                        points += comboBonus;
+                    }
+                    
+                    // 重置连击计时器
+                    startComboTimer();
+                    
+                    // 检查连击成就
+                    checkAchievements(score, comboCount);
+                }
+                
+                score += points;
+                scoreElement.textContent = score;
+                
+                // 显示得分动画
+                showScoreAnimation(points, mushroomElement);
+                
+                // 检查分数成就
+                checkAchievements(score, comboCount);
+                
+                // 移除蘑菇
+                setTimeout(() => {
+                    if (mushroomElement.parentNode) {
+                        mushroomElement.parentNode.removeChild(mushroomElement);
+                    }
+                    mushrooms.splice(index, 1);
+                }, 300);
+            }
+        }
+        
+        // 显示得分动画
+        function showScoreAnimation(points, mushroomElement) {
+            const scorePopup = document.createElement('div');
+            scorePopup.className = 'score-popup';
+            scorePopup.textContent = points > 0 ? `+${points}` : points;
+            
+            const rect = mushroomElement.getBoundingClientRect();
+            const containerRect = gameContainer.getBoundingClientRect();
+            
+            scorePopup.style.left = (rect.left - containerRect.left + rect.width / 2 - 10) + 'px';
+            scorePopup.style.top = (rect.top - containerRect.top) + 'px';
+            
+            gameContainer.appendChild(scorePopup);
+            
+            // 动画结束后移除元素
+            scorePopup.addEventListener('animationend', () => {
+                if (scorePopup.parentNode) {
+                    scorePopup.parentNode.removeChild(scorePopup);
+                }
+            });
+        }
+        
+        // 创建蘑菇
+        function createMushroom() {
+            const mushroomTypes = ['normal', 'special', 'poison'];
+            
+            // 根据难度调整权重
+            const currentSettings = difficultySettings[difficulty];
+            const typeWeights = [
+                0.6, // 普通蘑菇
+                0.4 - currentSettings.poisonWeight, // 特殊蘑菇
+                currentSettings.poisonWeight // 毒蘑菇
+            ];
+            
+            // 根据权重随机选择蘑菇类型
+            let typeIndex = 0;
+            const random = Math.random();
+            let cumulativeWeight = 0;
+            
+            for (let i = 0; i < typeWeights.length; i++) {
+                cumulativeWeight += typeWeights[i];
+                if (random < cumulativeWeight) {
+                    typeIndex = i;
+                    break;
+                }
+            }
+            
+            const type = mushroomTypes[typeIndex];
+            const mushroom = {
+                type: type,
+                x: Math.random() * (gameContainer.clientWidth - 50),
+                y: -50
+            };
+            
+            const mushroomElement = document.createElement('div');
+            mushroomElement.className = `mushroom mushroom-${type}`;
+            mushroomElement.id = `mushroom-${mushrooms.length}`;
+            mushroomElement.style.left = mushroom.x + 'px';
+            mushroomElement.style.top = mushroom.y + 'px';
+            
+            gameContainer.appendChild(mushroomElement);
+            mushrooms.push(mushroom);
+        }
+        
+        // 播放音效
+        function playSound(type) {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            switch (type) {
+                case 'normal':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    break;
+                case 'special':
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(660, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    break;
+                case 'poison':
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    break;
+            }
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.start();
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.3);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+        
+        // 更新计时器
+        function updateTimer() {
+            if (isPaused) return;
+            
+            gameTime--;
+            timeElement.textContent = gameTime;
+            
+            if (gameTime <= 0) {
+                endGame();
+            }
+        }
+        
+        // 开始游戏
+        function startGame() {
+            // 要求激活音频上下文（因为浏览器策略需要用户交互来启用音频）
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            
+            // 重置游戏状态
+            score = 0;
+            gameTime = 60;
+            playerPosition = 375;
+            mushrooms = [];
+            isPaused = false;
+            comboCount = 0;
+            if (comboTimer) clearTimeout(comboTimer);
+            comboDisplay.style.display = 'none';
+            
+            // 清除之前的元素
+            document.querySelectorAll('.mushroom').forEach(el => el.remove());
+            document.querySelectorAll('.score-popup').forEach(el => el.remove());
+            document.querySelectorAll('.firework').forEach(el => el.remove());
+            document.querySelectorAll('.grass').forEach(el => el.remove());
+            
+            // 创建草地装饰
+            createGrass();
+            
+            // 更新UI
+            scoreElement.textContent = score;
+            timeElement.textContent = gameTime;
+            player.style.left = playerPosition + 'px';
+            achievementElement.style.display = 'none';
+            
+            // 隐藏开始和结束屏幕
+            startScreen.style.display = 'none';
+            gameOverScreen.style.display = 'none';
+            highScoresPanel.style.display = 'none';
+            
+            // 启动游戏循环
+            isGameRunning = true;
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            gameInterval = setInterval(gameLoop, 1000 / 60);  // 60fps
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        // 结束游戏
+        function endGame() {
+            isGameRunning = false;
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            
+            // 更新最高分
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem(`highScore_${difficulty}`, highScore);
+                updateHighScoreDisplay();
+            }
+            
+            // 更新高分榜
+            const newScore = {
+                score: score,
+                date: Date.now()
+            };
+            
+            highScores[difficulty].push(newScore);
+            highScores[difficulty].sort((a, b) => b.score - a.score);
+            
+            // 只保留前10个高分
+            if (highScores[difficulty].length > 10) {
+                highScores[difficulty] = highScores[difficulty].slice(0, 10);
+            }
+            
+            localStorage.setItem('highScores', JSON.stringify(highScores));
+            
+            finalScoreElement.textContent = score;
+            gameOverScreen.style.display = 'flex';
+            
+            // 创建庆祝烟花
+            if (score > 0) {
+                createFireworks();
+            }
+        }
+        
+        // 移动端控制
+        let touchStartX = 0;
+        
+        gameContainer.addEventListener('touchstart', (e) => {
+            if (!isGameRunning) return;
+            touchStartX = e.touches[0].clientX;
+        });
+        
+        gameContainer.addEventListener('touchmove', (e) => {
+            if (!isGameRunning) return;
+            e.preventDefault();
+            
+            const touchX = e.touches[0].clientX;
+            const diffX = touchX - touchStartX;
+            
+            playerPosition += diffX / 5;
+            
+            if (playerPosition < 0) {
+                playerPosition = 0;
+            }
+            if (playerPosition > gameContainer.clientWidth - player.clientWidth) {
+                playerPosition = gameContainer.clientWidth - player.clientWidth;
+            }
+            
+            player.style.left = playerPosition + 'px';
+            touchStartX = touchX;
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,362 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    gap: 30px;
+    max-width: 900px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-in-out;
+    z-index: 1;
+}
+
+.game-info {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.score-container {
+    background-color: #f8f8f8;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.score-container p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.next-piece-container {
+    background-color: #f8f8f8;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+#next-piece {
+    height: 100px;
+    display: grid;
+    grid-template-columns: repeat(4, 20px);
+    grid-template-rows: repeat(4, 20px);
+    gap: 1px;
+    margin: 0 auto;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4a6ea9;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #3b5998;
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
+
+button:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.instructions {
+    background-color: #f8f8f8;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.instructions p {
+    margin: 5px 0;
+}
+
+.game-board-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(20, 30px);
+    gap: 1px;
+    background-color: #eee;
+    border: 2px solid #333;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.cell {
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: background-color 0.1s ease;
+}
+
+.cell.empty {
+    background-color: #f8f8f8;
+}
+
+.cell.filled {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 方块颜色 */
+.cell.piece-I {
+    background-color: #00f0f0;
+}
+
+.cell.piece-J {
+    background-color: #0000f0;
+}
+
+.cell.piece-L {
+    background-color: #f0a000;
+}
+
+.cell.piece-O {
+    background-color: #f0f000;
+}
+
+.cell.piece-S {
+    background-color: #00f000;
+}
+
+.cell.piece-T {
+    background-color: #a000f0;
+}
+
+.cell.piece-Z {
+    background-color: #f00000;
+}
+
+/* 游戏结束动画 */
+@keyframes gameOver {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.game-over {
+    animation: gameOver 1.5s infinite;
+}
+
+/* 方块落地震动效果 */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    50% { transform: translateX(0); }
+    75% { transform: translateX(2px); }
+    100% { transform: translateX(0); }
+}
+
+.shake {
+    animation: shake 0.15s ease-in-out;
+}
+
+/* 消行动画 */
+@keyframes clearLine {
+    0% { 
+        background-color: white;
+        transform: scaleY(1);
+    }
+    50% { 
+        background-color: white;
+        transform: scaleY(0.1);
+    }
+    100% { 
+        background-color: #f8f8f8;
+        transform: scaleY(1);
+    }
+}
+
+.clear-animation {
+    animation: clearLine 0.3s ease-out;
+}
+
+/* 旋转动画 */
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(90deg); }
+}
+
+/* 方块移动过渡 */
+.moving-piece {
+    transition: transform 0.08s linear;
+}
+
+/* 淡入动画 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 得分增加动画 */
+@keyframes scoreIncrease {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+.score-increase {
+    animation: scoreIncrease 0.3s ease-out;
+    color: #4a6ea9;
+    font-weight: bold;
+}
+
+/* 等级提升动画 */
+@keyframes levelUp {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.3); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.level-up {
+    animation: levelUp 0.5s ease;
+    color: #ff5722;
+    font-weight: bold;
+}
+
+/* 新方块出现动画 */
+@keyframes newPiece {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+}
+
+.new-piece {
+    animation: newPiece 0.2s ease-out;
+}
+
+/* 游戏介绍面板 */
+.intro-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.intro-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 500px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.tetris-mini-preview {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.piece-preview {
+    width: 30px;
+    height: 30px;
+    border-radius: 3px;
+    animation: bounce 2s infinite;
+}
+
+.piece-preview:nth-child(1) { animation-delay: 0.0s; }
+.piece-preview:nth-child(2) { animation-delay: 0.1s; }
+.piece-preview:nth-child(3) { animation-delay: 0.2s; }
+.piece-preview:nth-child(4) { animation-delay: 0.3s; }
+.piece-preview:nth-child(5) { animation-delay: 0.4s; }
+.piece-preview:nth-child(6) { animation-delay: 0.5s; }
+.piece-preview:nth-child(7) { animation-delay: 0.6s; }
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+#start-game-intro {
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    transition: all 0.3s ease;
+}
+
+#start-game-intro:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 隐藏介绍面板 */
+.hidden {
+    display: none !important;
+}
