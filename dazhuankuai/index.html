@@ -1,33 +1,221 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>打砖块游戏</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        canvas {
+            border: 2px solid #444;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        #game-wrapper {
+            display: flex;
+            gap: 20px;
+        }
+        #game-container {
+            position: relative;
+        }
+        #modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            z-index: 10;
+        }
+        #modal h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        #restart-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        #restart-btn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        #sound-toggle {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        #sound-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        #instructions {
+            width: 250px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            font-size: 14px;
+        }
+        #instructions h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: #4CAF50;
+            text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+        .instruction-section {
+            margin-bottom: 15px;
+        }
+        .instruction-section h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: #4488ff;
+        }
+        .brick-type {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .brick-color {
+            width: 20px;
+            height: 15px;
+            border-radius: 3px;
+            margin-right: 10px;
+        }
+        .yellow-brick {
+            background-color: hsl(60, 100%, 50%);
+        }
+        .blue-brick {
+            background-color: hsl(210, 100%, 50%);
+        }
+        .red-brick {
+            background-color: hsl(0, 100%, 50%);
+        }
+        .normal-brick {
+            background-color: hsl(180, 100%, 50%);
+        }
+        .rainbow-brick {
+            background: linear-gradient(to right, 
+                hsl(0, 100%, 50%), 
+                hsl(60, 100%, 50%), 
+                hsl(120, 100%, 50%), 
+                hsl(180, 100%, 50%), 
+                hsl(240, 100%, 50%), 
+                hsl(300, 100%, 50%));
+        }
+        .green-brick {
+            background-color: hsl(120, 100%, 50%);
+        }
+        kbd {
+            background-color: #333;
+            border-radius: 3px;
+            border: 1px solid #666;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.2);
+            color: #fff;
+            display: inline-block;
+            font-size: 12px;
+            line-height: 1;
+            padding: 2px 4px;
+            margin: 0 2px;
+        }
+    </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="ui-overlay">
-            <div class="score-display">分数: <span id="score">0</span></div>
-            <div class="combo-display"><span id="combo-multiplier">1</span>x</div>
-            <div class="paddle-power"><div id="paddle-power-bar"></div></div>
+    <div id="game-wrapper">
+        <div id="game-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            <button id="sound-toggle">音乐: 关闭</button>
+            <div id="modal">
+                <h2>GAME OVER</h2>
+                <button id="restart-btn">重新开始</button>
+            </div>
         </div>
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
-        <div id="gameOverModal" class="modal">
-            <div class="modal-content">
-                <h2>游戏结束</h2>
-                <p>最终分数: <span id="final-score">0</span></p>
-                <p>最高分数: <span id="high-score">0</span></p>
-                <button id="restartButton">重新开始</button>
+        
+        <div id="instructions">
+            <h2>游戏操作说明</h2>
+            
+            <div class="instruction-section">
+                <h3>键盘控制</h3>
+                <p><kbd>←</kbd> <kbd>→</kbd> 左右方向键移动挡板</p>
+                <p><kbd>空格</kbd> 开始游戏/发射小球</p>
+                <p><kbd>P</kbd> 暂停/继续游戏</p>
+            </div>
+            
+            <div class="instruction-section">
+                <h3>鼠标控制</h3>
+                <p>移动鼠标可以控制挡板位置</p>
+                <p>点击「开始游戏」按钮开始</p>
+            </div>
+            
+            <div class="instruction-section">
+                <h3>砖块类型</h3>
+                <div class="brick-type">
+                    <div class="brick-color normal-brick"></div>
+                    <span>普通砖块</span>
+                </div>
+                <div class="brick-type">
+                    <div class="brick-color yellow-brick"></div>
+                    <span>加速砖块 - 小球速度+10%</span>
+                </div>
+                <div class="brick-type">
+                    <div class="brick-color blue-brick"></div>
+                    <span>收缩砖块 - 挡板宽度-20%</span>
+                </div>
+                <div class="brick-type">
+                    <div class="brick-color red-brick"></div>
+                    <span>分裂砖块 - 小球分裂为两个</span>
+                </div>
+                <div class="brick-type">
+                    <div class="brick-color rainbow-brick"></div>
+                    <span>彩虹砖块 - 清除周围两层砖块</span>
+                </div>
+                <div class="brick-type">
+                    <div class="brick-color green-brick"></div>
+                    <span>加长砖块 - 挡板宽度+20%</span>
+                </div>
+            </div>
+            
+            <div class="instruction-section">
+                <h3>游戏目标</h3>
+                <p>击碎所有砖块进入下一关</p>
+                <p>保持小球不落地，获得高分</p>
+                <p>连续击碎砖块可获得连击加分</p>
             </div>
         </div>
     </div>
-    <!-- 游戏音效库 -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
-    <!-- 游戏脚本 -->
-    <script src="js/utils.js"></script>
-    <script src="js/effects.js"></script>
-    <script src="js/game.js"></script>
+    <script src="game.js"></script>
 </body>
-</html> 
+</html>
