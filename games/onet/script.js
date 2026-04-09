@@ -13,7 +13,7 @@ function initGame() {
     document.getElementById('modal').style.display = 'none';
     const boardEl = document.getElementById('board');
     boardEl.innerHTML = '';
-    boardEl.style.gridTemplateColumns = `repeat(${COLS}, 45px)`;
+    boardEl.style.gridTemplateColumns = `repeat(${COLS}, var(--cell-size))`;
     boardEl.style.gridTemplateRows = `repeat(${ROWS}, 45px)`;
 
     let items = [];

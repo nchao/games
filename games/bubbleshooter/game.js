@@ -101,15 +101,15 @@ function getNeighbors(r, c) {
 // Mouse movement for aiming
 canvas.addEventListener('mousemove', (e) => {
     const rect = canvas.getBoundingClientRect();
-    mouseX = e.clientX - rect.left;
-    mouseY = e.clientY - rect.top;
+    mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
 });
 
 // Touch movement for aiming
 canvas.addEventListener('touchmove', (e) => {
     const rect = canvas.getBoundingClientRect();
-    mouseX = e.touches[0].clientX - rect.left;
-    mouseY = e.touches[0].clientY - rect.top;
+    mouseX = (e.touches[0].clientX - rect.left) * (canvas.width / rect.width);
+    mouseY = (e.touches[0].clientY - rect.top) * (canvas.height / rect.height);
     e.preventDefault();
 }, {passive: false});
 

@@ -6,14 +6,16 @@ body {
     align-items: center;
     margin: 0;
     padding: 20px;
+    --cell-size: 45px;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 630px;
+    width: min(630px, 100%);
     margin-bottom: 20px;
+    gap: 12px;
 }
 
 h1 {
@@ -49,12 +51,12 @@ button:hover {
 }
 
 .cell {
-    width: 45px;
-    height: 45px;
+    width: var(--cell-size);
+    height: var(--cell-size);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: calc(var(--cell-size) * 0.62);
     background-color: #fff;
     cursor: pointer;
     border-radius: 4px;
@@ -112,4 +114,27 @@ button:hover {
 .modal-content h2 {
     margin-top: 0;
     color: #4CAF50;
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 12px;
+        --cell-size: 32px;
+    }
+
+    .header {
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+    }
+
+    button {
+        width: 100%;
+        max-width: 260px;
+    }
+
+    #board {
+        gap: 1px;
+    }
 }
