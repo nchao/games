@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>变异贪吃蛇</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>变异贪吃蛇</h1>
+        <div class="score-board">分数: <span id="score">0</span></div>
+        <div class="status" id="status">状态: 准备就绪</div>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div class="controls">
+            <button id="startBtn">开始游戏</button>
+        </div>
+        <div class="instructions">
+            <p><strong>操作指南：</strong>方向键 或 W/A/S/D 控制移动</p>
+            <p>🔴 <strong>红色圆点：</strong>普通食物 (增加长度，+10分)</p>
+            <p>⬛ <strong>黑色方块：</strong>障碍物 (撞击导致游戏结束)</p>
+            <p>🔵 <strong>蓝色圆点：</strong>加速道具 (持续5秒，+20分)</p>
+            <p>🟡 <strong>黄色圆点：</strong>减速道具 (持续5秒，+20分)</p>
+            <p>👻 <strong>穿墙特性：</strong>蛇可以穿过边界从另一侧出来</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

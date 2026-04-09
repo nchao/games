@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Tetris Variant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div class="side-panel">
+            <h2>HOLD</h2>
+            <canvas id="hold-canvas" width="120" height="120"></canvas>
+            <div id="score-box">
+                <h2>SCORE</h2>
+                <p id="score">0</p>
+                <h2>LINES</h2>
+                <p id="lines">0</p>
+                <h2>LEVEL</h2>
+                <p id="level">1</p>
+            </div>
+        </div>
+        
+        <div class="main-panel">
+            <canvas id="game-canvas" width="300" height="600"></canvas>
+            <div id="game-over" style="display: none;">
+                <h2>GAME OVER</h2>
+                <button onclick="resetGame()">Restart</button>
+            </div>
+        </div>
+        
+        <div class="side-panel">
+            <h2>NEXT</h2>
+            <canvas id="next-canvas" width="120" height="400"></canvas>
+            <div class="controls">
+                <p><b>🎮 控制说明:</b></p>
+                <p><kbd>←</kbd> <kbd>→</kbd> : 左右移动</p>
+                <p><kbd>↑</kbd> / <kbd>X</kbd> : 顺时针旋转</p>
+                <p><kbd>Z</kbd> : 逆时针旋转</p>
+                <p><kbd>↓</kbd> : 软降</p>
+                <p><kbd>Space</kbd> : 瞬间硬降</p>
+                <p><kbd>C</kbd> / <kbd>Shift</kbd> : 暂存(Hold)</p>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -636,9 +636,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 弹出游戏结束消息
         setTimeout(() => {
-            alert(`游戏结束！你的最终得分是：${score}`);
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('game-over-modal').classList.remove('hidden');
         }, 500);
     }
+    
+    document.getElementById('modal-restart-btn').addEventListener('click', () => {
+        document.getElementById('game-over-modal').classList.add('hidden');
+        restartGame();
+    });
     
     // 初始化游戏
     init();

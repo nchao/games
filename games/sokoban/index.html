@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>推箱子游戏 (Sokoban)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>推箱子 (Sokoban)</h1>
+        <div id="controls">
+            <button id="btn-undo">撤销 (Undo)</button>
+            <button id="btn-reset">重置 (Reset)</button>
+            <button id="btn-prev">上一关 (Prev)</button>
+            <button id="btn-next">下一关 (Next)</button>
+        </div>
+        <div id="level-info">当前关卡: <span id="level-num">1</span></div>
+        <div id="board"></div>
+        <div id="message"></div>
+        <div class="instructions">
+            <p>🎮 <strong>操作方式：</strong>使用键盘 <strong>方向键</strong> 或 <strong>W A S D</strong> 移动玩家。</p>
+            <p>🔄 <strong>撤销：</strong>按 <strong>Ctrl+Z</strong> 或点击按钮撤回上一步。</p>
+            <p>💡 <strong>目标：</strong>将所有黄色的箱子推到红色的目标点上即可过关。</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

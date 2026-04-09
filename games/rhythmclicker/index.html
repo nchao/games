@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rhythm Clicker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="ui-layer">
+            <div id="score-board">
+                <p>分数: <span id="score">0</span></p>
+                <p>连击: <span id="combo">0</span></p>
+            </div>
+            <div id="start-screen">
+                <h1 id="start-title">节奏点击</h1>
+                <p id="start-desc">按 D, F, J, K 键击打下落的音符</p>
+                <button id="start-btn">开始游戏</button>
+            </div>
+            <div id="feedback"></div>
+        </div>
+        <canvas id="game-canvas" width="400" height="600"></canvas>
+        <div style="text-align: center; color: white; margin-top: 15px; font-family: sans-serif;">
+            <p>🎮 <strong>操作方式：</strong>当音符到达底部判定线时，按下对应的键盘按键 <kbd>D</kbd> <kbd>F</kbd> <kbd>J</kbd> <kbd>K</kbd>。</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

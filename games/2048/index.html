@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">2048</h1>
+            <div class="score-container">
+                <div class="score-title">SCORE</div>
+                <div id="score">0</div>
+            </div>
+        </div>
+        <div class="game-intro">
+            <p>合并相同的数字，得到 <strong>2048</strong>！</p>
+            <p style="font-size: 14px; color: #776e65; margin-top: 5px;">🎮 <strong>操作方式：</strong>使用键盘 <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> 或 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 控制方块滑动。移动端支持滑动屏幕。</p>
+            <button id="restart-btn" style="margin-top: 10px;">重新开始</button>
+        </div>
+        <div class="game-container">
+            <div class="grid-container" id="grid-container">
+                <!-- 16个背景格子将由JS生成 -->
+            </div>
+            <div class="tile-container" id="tile-container">
+                <!-- 动态生成的数字块 -->
+            </div>
+            <div class="game-message" id="game-message">
+                <p></p>
+                <div class="lower">
+                    <button class="retry-button">再试一次</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

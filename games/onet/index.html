@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>连连看 (Onet)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>连连看</h1>
+        <button id="restart-btn">重新开始</button>
+    </div>
+    <div id="game-container">
+        <div id="board"></div>
+        <svg id="path-svg"></svg>
+    </div>
+    <div style="text-align: center; color: #555; margin-top: 15px; font-family: sans-serif;">
+        <p>🎮 <strong>操作方式：</strong>点击两个相同的图案，若路径转折不超过2次即可消除。</p>
+    </div>
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2 id="modal-message">恭喜你，过关了！</h2>
+            <button id="modal-restart-btn">再玩一次</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

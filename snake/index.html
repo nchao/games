@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贪吃蛇游戏</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="score">分数: <span id="score">0</span></div>
+            <div class="high-score">最高分: <span id="highScore">0</span></div>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <div class="touch-controls">
+            <div></div>
+            <button class="touch-btn" id="upBtn">↑</button>
+            <div></div>
+            <button class="touch-btn" id="leftBtn">←</button>
+            <button class="touch-btn" id="downBtn">↓</button>
+            <button class="touch-btn" id="rightBtn">→</button>
+        </div>
+        <div class="game-settings">
+            <div class="speed-control">
+                <label for="gameSpeed">游戏速度:</label>
+                <select id="gameSpeed">
+                    <option value="200">慢速</option>
+                    <option value="150">中速</option>
+                    <option value="100">快速</option>
+                </select>
+            </div>
+        </div>
+        <div class="controls">
+            <button id="startBtn">开始游戏</button>
+            <button id="pauseBtn">暂停</button>
+            <button id="restartBtn">重新开始</button>
+        </div>
+        <div class="game-over" id="gameOver">
+            <h2>游戏结束!</h2>
+            <p>最终得分: <span id="finalScore">0</span></p>
+            <button id="playAgainBtn">再玩一次</button>
+        </div>
+    </div>
+    <script src="js/game.js"></script>
+</body>
+</html>
