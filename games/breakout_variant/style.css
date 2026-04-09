@@ -7,11 +7,15 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .game-container {
     text-align: center;
+    width: 100%;
+    max-width: 800px;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 canvas {
@@ -20,6 +24,9 @@ canvas {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     display: block;
     margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 70vh;
 }
 
 .score-board {

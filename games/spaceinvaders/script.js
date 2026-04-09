@@ -109,7 +109,7 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
 
     btnShoot.addEventListener('touchstart', (e) => { 
         if (!gameOver && !isWin) shoot(); 
-        if (gameOver || isWin) resetGame();
+        if (gameOver || isWin) resetGame(isWin);
         e.preventDefault(); 
     });
 }
