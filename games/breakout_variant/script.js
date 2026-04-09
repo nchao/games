@@ -6,6 +6,8 @@ const livesElement = document.getElementById('lives');
 // Game state
 let score = 0;
 let lives = 3;
+let currentLevel = 1;
+const MAX_LEVELS = 15;
 let isGameOver = false;
 let isGameWon = false;
 
@@ -25,37 +27,65 @@ const paddle = {
 let balls = [];
 
 function createBall() {
+    const baseSpeed = 4 + (currentLevel * 0.5); // Speed increases with level
     return {
         x: canvas.width / 2,
         y: canvas.height - 30,
         radius: 6,
-        speed: 5,
-        dx: 4 * (Math.random() > 0.5 ? 1 : -1),
-        dy: -4
+        speed: baseSpeed,
+        dx: baseSpeed * (Math.random() > 0.5 ? 1 : -1),
+        dy: -baseSpeed
     };
 }
 balls.push(createBall());
 
 // Bricks
-const brickRowCount = 5;
-const brickColumnCount = 9;
+let brickRowCount = 3;
+let brickColumnCount = 7;
 const brickWidth = 75;
 const brickHeight = 20;
 const brickPadding = 10;
 const brickOffsetTop = 50;
-const brickOffsetLeft = (canvas.width - (brickColumnCount * (brickWidth + brickPadding) - brickPadding)) / 2;
+let brickOffsetLeft = 0;
 
 let bricks = [];
 function initBricks() {
+    // Increase rows and cols based on level
+    brickRowCount = Math.min(8, 3 + Math.floor((currentLevel - 1) / 2));
+    brickColumnCount = Math.min(9, 5 + Math.floor((currentLevel - 1) / 3));
+    
+    brickOffsetLeft = (canvas.width - (brickColumnCount * (brickWidth + brickPadding) - brickPadding)) / 2;
+
     bricks = [];
     for (let c = 0; c < brickColumnCount; c++) {
         bricks[c] = [];
         for (let r = 0; r < brickRowCount; r++) {
-            bricks[c][r] = { x: 0, y: 0, status: 1 };
+            // Create gaps or patterns for higher levels
+            let status = 1;
+            if (currentLevel > 3 && (r + c) % 3 === 0) status = 0; // Empty spots
+            if (currentLevel > 6 && r % 2 === 0 && c % 2 !== 0) status = 0;
+            
+            bricks[c][r] = { x: 0, y: 0, status: status };
         }
     }
 }
 initBricks();
+
+// UI Elements
+const levelElement = document.createElement('div');
+levelElement.style.position = 'absolute';
+levelElement.style.top = '15px';
+levelElement.style.left = '50%';
+levelElement.style.transform = 'translateX(-50%)';
+levelElement.style.color = 'white';
+levelElement.style.fontSize = '20px';
+levelElement.style.fontWeight = 'bold';
+document.querySelector('.game-container').appendChild(levelElement);
+
+function updateLevelUI() {
+    levelElement.innerText = `Level: ${currentLevel} / ${MAX_LEVELS}`;
+}
+updateLevelUI();
 
 // Power-ups
 let powerUps = [];
@@ -241,7 +271,18 @@ function checkWin() {
         }
     }
     if (allDestroyed) {
-        isGameWon = true;
+        if (currentLevel < MAX_LEVELS) {
+            currentLevel++;
+            updateLevelUI();
+            initBricks();
+            balls = [createBall()];
+            paddle.x = canvas.width / 2 - paddle.width / 2;
+            paddle.laserActive = false;
+            powerUps = [];
+            lasers = [];
+        } else {
+            isGameWon = true;
+        }
     }
 }
 

@@ -5,6 +5,8 @@ const ctx = canvas.getContext('2d');
 let score = 0;
 let gameOver = false;
 let isWin = false;
+let currentLevel = 1;
+const MAX_LEVELS = 15;
 
 // 玩家飞船设置
 const player = {
@@ -25,13 +27,13 @@ const bulletHeight = 15;
 
 // 敌人设置
 const enemies = [];
-const enemyRowCount = 5;
-const enemyColumnCount = 10;
+let enemyRowCount = 3;
+let enemyColumnCount = 8;
 const enemyWidth = 40;
 const enemyHeight = 30;
 const enemyPadding = 15;
 const enemyOffsetTop = 60;
-const enemyOffsetLeft = 60;
+let enemyOffsetLeft = 0;
 
 let enemyDirection = 1; // 1 为向右, -1 为向左
 let enemySpeed = 1.5;
@@ -39,6 +41,12 @@ const enemyDropDistance = 20;
 
 // 初始化敌人网格
 function initEnemies() {
+    enemyRowCount = Math.min(6, 2 + Math.floor(currentLevel / 3));
+    enemyColumnCount = Math.min(12, 6 + Math.floor(currentLevel / 2));
+    enemySpeed = 1.0 + (currentLevel * 0.3);
+    
+    enemyOffsetLeft = (canvas.width - (enemyColumnCount * (enemyWidth + enemyPadding) - enemyPadding)) / 2;
+
     for (let c = 0; c < enemyColumnCount; c++) {
         for (let r = 0; r < enemyRowCount; r++) {
             enemies.push({
@@ -118,15 +126,17 @@ function shoot() {
 }
 
 // 重新开始游戏
-function resetGame() {
-    score = 0;
+function resetGame(isNextLevel = false) {
+    if (!isNextLevel) {
+        score = 0;
+        currentLevel = 1;
+    }
     gameOver = false;
     isWin = false;
     player.x = canvas.width / 2 - player.width / 2;
     bullets.length = 0;
     enemies.length = 0;
     enemyDirection = 1;
-    enemySpeed = 1.5;
     initEnemies();
 }
 
@@ -213,7 +223,12 @@ function update() {
     // 检查是否胜利 (所有敌人都被击毁)
     const aliveEnemies = enemies.filter(e => e.status === 1).length;
     if (aliveEnemies === 0) {
-        isWin = true;
+        if (currentLevel < MAX_LEVELS) {
+            currentLevel++;
+            resetGame(true);
+        } else {
+            isWin = true;
+        }
     }
 
     // 敌人与玩家碰撞，或敌人到达底部
@@ -272,6 +287,8 @@ function draw() {
     ctx.font = '20px "Segoe UI", Tahoma, Geneva, Verdana, sans-serif';
     ctx.textAlign = 'left';
     ctx.fillText(`分数: ${score}`, 20, 30);
+    ctx.textAlign = 'right';
+    ctx.fillText(`第 ${currentLevel} 关 / 共 ${MAX_LEVELS} 关`, canvas.width - 20, 30);
 
     // 绘制游戏结束或胜利画面
     if (gameOver) {

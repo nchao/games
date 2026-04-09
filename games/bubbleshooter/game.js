@@ -12,24 +12,31 @@ let grid = [];
 let currentBubble = null;
 let nextBubbleColor = null;
 let score = 0;
+let currentLevel = 1;
+const MAX_LEVELS = 15;
 let mouseX = canvas.width / 2;
 let mouseY = 0;
 let dropAnimations = [];
 let animationId;
 
-function init() {
+function init(isNextLevel = false) {
     if (animationId) {
         cancelAnimationFrame(animationId);
     }
     
     // Initialize empty grid
     grid = Array(MAX_ROWS).fill(null).map(() => Array(MAX_COLS).fill(null));
-    score = 0;
+    if (!isNextLevel) {
+        score = 0;
+        currentLevel = 1;
+    }
     updateScore(0);
     dropAnimations = [];
     
-    // Fill top 5 rows with random bubbles
-    for (let r = 0; r < 5; r++) {
+    // Fill top rows based on level (starts at 3 rows, increases every 3 levels)
+    const startRows = Math.min(8, 2 + Math.floor((currentLevel + 2) / 3));
+    
+    for (let r = 0; r < startRows; r++) {
         const maxCols = (r % 2 !== 0) ? MAX_COLS - 1 : MAX_COLS;
         for (let c = 0; c < maxCols; c++) {
             grid[r][c] = {
@@ -44,7 +51,10 @@ function init() {
 }
 
 function getRandomColor() {
-    return COLORS[Math.floor(Math.random() * COLORS.length)];
+    // Number of colors increases with level (max 6)
+    const numColors = Math.min(COLORS.length, 3 + Math.floor(currentLevel / 4));
+    const levelColors = COLORS.slice(0, numColors);
+    return levelColors[Math.floor(Math.random() * levelColors.length)];
 }
 
 function spawnBubble() {
@@ -246,6 +256,33 @@ function processMatches(r, c, color) {
         });
         updateScore(floating.length * 20);
     }
+    
+    // Check level clear
+    let hasBubbles = false;
+    for (let r = 0; r < MAX_ROWS; r++) {
+        const maxCols = (r % 2 !== 0) ? MAX_COLS - 1 : MAX_COLS;
+        for (let c = 0; c < maxCols; c++) {
+            if (grid[r][c]) {
+                hasBubbles = true;
+                break;
+            }
+        }
+        if (hasBubbles) break;
+    }
+    
+    if (!hasBubbles) {
+        if (currentLevel < MAX_LEVELS) {
+            currentLevel++;
+            setTimeout(() => {
+                init(true); // next level
+            }, 1000);
+        } else {
+            setTimeout(() => {
+                document.getElementById('final-score').textContent = score + " (通关！)";
+                document.getElementById('modal').style.display = 'flex';
+            }, 1000);
+        }
+    }
 }
 
 function addDropAnimation(r, c, color) {
@@ -324,6 +361,8 @@ function findFloating() {
 function updateScore(points) {
     score += points;
     scoreElement.textContent = score;
+    const levelDisplay = document.getElementById('level-display');
+    if (levelDisplay) levelDisplay.textContent = `第 ${currentLevel} 关`;
 }
 
 function drawBubble(x, y, color) {
