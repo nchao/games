@@ -272,6 +272,34 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
+// 添加移动端滑动支持
+let touchStartX = 0;
+let touchStartY = 0;
+boardEl.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+    e.preventDefault();
+}, {passive: false});
+
+boardEl.addEventListener('touchend', e => {
+    let touchEndX = e.changedTouches[0].screenX;
+    let touchEndY = e.changedTouches[0].screenY;
+    
+    let dx = touchEndX - touchStartX;
+    let dy = touchEndY - touchStartY;
+    
+    if (Math.abs(dx) < 30 && Math.abs(dy) < 30) return; 
+    
+    if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx > 0) move(1, 0);
+        else move(-1, 0);
+    } else {
+        if (dy > 0) move(0, 1);
+        else move(0, -1);
+    }
+    e.preventDefault();
+}, {passive: false});
+
 btnUndo.addEventListener('click', undo);
 btnReset.addEventListener('click', () => loadLevel(currentLevelIndex));
 btnPrev.addEventListener('click', () => {

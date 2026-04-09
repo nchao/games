@@ -31,7 +31,7 @@
         <div class="side-panel">
             <h2>NEXT</h2>
             <canvas id="next-canvas" width="120" height="400"></canvas>
-            <div class="controls">
+            <div class="controls" id="keyboard-controls">
                 <p><b>🎮 控制说明:</b></p>
                 <p><kbd>←</kbd> <kbd>→</kbd> : 左右移动</p>
                 <p><kbd>↑</kbd> / <kbd>X</kbd> : 顺时针旋转</p>
@@ -42,6 +42,22 @@
             </div>
         </div>
     </div>
+    
+    <!-- Mobile Virtual Buttons (hidden by default) -->
+    <div id="mobile-controls" style="display: none; width: 100%; max-width: 400px; margin: 20px auto 0; padding: 10px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <button id="btn-hold" style="flex: 1; margin-right: 10px; padding: 15px; font-size: 16px; border-radius: 8px; background: #607d8b; color: white; border: none;">暂存</button>
+            <button id="btn-rot-left" style="flex: 1; margin-right: 5px; padding: 15px; font-size: 16px; border-radius: 8px; background: #9c27b0; color: white; border: none;">↺</button>
+            <button id="btn-rot-right" style="flex: 1; margin-left: 5px; padding: 15px; font-size: 16px; border-radius: 8px; background: #9c27b0; color: white; border: none;">↻</button>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <button id="btn-left" style="flex: 1; margin-right: 5px; padding: 20px; font-size: 20px; border-radius: 8px; background: #2196f3; color: white; border: none;">←</button>
+            <button id="btn-down" style="flex: 1; margin: 0 5px; padding: 20px; font-size: 20px; border-radius: 8px; background: #2196f3; color: white; border: none;">↓</button>
+            <button id="btn-right" style="flex: 1; margin-left: 5px; padding: 20px; font-size: 20px; border-radius: 8px; background: #2196f3; color: white; border: none;">→</button>
+        </div>
+        <button id="btn-drop" style="width: 100%; padding: 20px; font-size: 18px; border-radius: 8px; background: #f44336; color: white; border: none; font-weight: bold;">瞬间硬降 (Drop)</button>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

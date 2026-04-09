@@ -123,6 +123,30 @@ window.addEventListener('keyup', (e) => {
     }
 });
 
+// Mobile virtual buttons support
+if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    document.getElementById('mobile-controls').style.display = 'flex';
+    
+    const setupMobileBtn = (id, key, colIndex) => {
+        const btn = document.getElementById(id);
+        btn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!isPlaying) return;
+            pressedKeys[key] = true;
+            handleHit(colIndex);
+        });
+        btn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            pressedKeys[key] = false;
+        });
+    };
+    
+    setupMobileBtn('btn-d', 'd', 0);
+    setupMobileBtn('btn-f', 'f', 1);
+    setupMobileBtn('btn-j', 'j', 2);
+    setupMobileBtn('btn-k', 'k', 3);
+}
+
 // 处理击打逻辑
 function handleHit(laneIndex) {
     const currentTime = Date.now() - startTime;

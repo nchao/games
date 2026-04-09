@@ -9,6 +9,7 @@ let flagsPlaced = 0;
 let revealedCount = 0;
 let timer = 0;
 let timerInterval = null;
+let isFlagMode = false;
 
 const boardElement = document.getElementById('board');
 const minesCountElement = document.getElementById('mines-count');
@@ -92,6 +93,11 @@ function handleLeftClick(r, c) {
     if (isGameOver) return;
     const cell = board[r][c];
     if (cell.isFlagged || cell.isRevealed) return;
+
+    if (isFlagMode) {
+        handleRightClick({preventDefault: () => {}}, r, c);
+        return;
+    }
 
     if (isFirstClick) {
         isFirstClick = false;
@@ -206,6 +212,23 @@ function startTimer() {
 
 restartBtn.addEventListener('click', initGame);
 document.getElementById('modal-restart-btn').addEventListener('click', initGame);
+
+// Mobile toggle flag mode support
+if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    const toggleBtn = document.getElementById('mobile-toggle-btn');
+    toggleBtn.style.display = 'inline-block';
+    
+    toggleBtn.addEventListener('click', () => {
+        isFlagMode = !isFlagMode;
+        if (isFlagMode) {
+            toggleBtn.innerHTML = '当前模式: 🚩 标记 (点击切换为 🔍 翻开)';
+            toggleBtn.style.backgroundColor = '#FF9800';
+        } else {
+            toggleBtn.innerHTML = '当前模式: 🔍 翻开 (点击切换为 🚩 标记)';
+            toggleBtn.style.backgroundColor = '#2196F3';
+        }
+    });
+}
 
 // Start game initially
 initGame();

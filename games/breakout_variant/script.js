@@ -88,6 +88,22 @@ function keyUpHandler(e) {
     else if (e.key === ' ' || e.code === 'Space') spacePressed = false;
 }
 
+// Touch controls for mobile
+canvas.addEventListener('touchmove', (e) => {
+    const relativeX = e.touches[0].clientX - canvas.offsetLeft;
+    const scaleX = canvas.width / canvas.offsetWidth;
+    const canvasX = relativeX * scaleX;
+    
+    if (canvasX > 0 && canvasX < canvas.width) {
+        paddle.x = canvasX - paddle.width / 2;
+    }
+    e.preventDefault();
+}, {passive: false});
+
+canvas.addEventListener('touchstart', (e) => {
+    spaceJustPressed = true; // Tap to shoot laser
+});
+
 function drawPaddle() {
     ctx.beginPath();
     ctx.rect(paddle.x, paddle.y, paddle.width, paddle.height);

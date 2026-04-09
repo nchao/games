@@ -61,6 +61,24 @@ document.addEventListener("keyup", (e) => {
     }
 });
 
+// Touch controls for mobile
+canvas.addEventListener("touchmove", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const touchY = e.touches[0].clientY - rect.top;
+    
+    // Scale touch coordinate to canvas internal resolution
+    const scaleY = canvas.height / rect.height;
+    const canvasY = touchY * scaleY;
+    
+    player.y = canvasY - player.height / 2;
+    
+    // Boundary check
+    if (player.y < 0) player.y = 0;
+    if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+    
+    e.preventDefault();
+}, {passive: false});
+
 // 绘图辅助函数
 function drawRect(x, y, w, h, color) {
     ctx.fillStyle = color;

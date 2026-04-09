@@ -3,11 +3,11 @@ body {
     color: #fff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
-    overflow: hidden;
 }
 
 #game-container {
@@ -17,6 +17,8 @@ body {
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .side-panel {

@@ -9,8 +9,19 @@
 <body>
     <div id="game-container">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
+        
+        <!-- Mobile Virtual Buttons -->
+        <div id="mobile-controls" style="display: none; justify-content: space-between; margin-top: 15px; padding: 0 20px;">
+            <div>
+                <button id="btn-left" style="width: 60px; height: 60px; font-size: 24px; border-radius: 50%; background: rgba(255,255,255,0.2); color: white; border: 2px solid white; margin-right: 10px;">←</button>
+                <button id="btn-right" style="width: 60px; height: 60px; font-size: 24px; border-radius: 50%; background: rgba(255,255,255,0.2); color: white; border: 2px solid white;">→</button>
+            </div>
+            <button id="btn-shoot" style="width: 80px; height: 60px; font-size: 20px; border-radius: 30px; background: rgba(231,76,60,0.8); color: white; border: 2px solid #c0392b;">🔥 射击</button>
+        </div>
+
         <div id="instructions" style="text-align: center; color: white; margin-top: 15px; font-family: sans-serif;">
             <p>🎮 <strong>操作方式：</strong>使用键盘 <kbd>←</kbd> 和 <kbd>→</kbd> 控制飞船移动，按 <kbd>空格键</kbd> 射击。</p>
+            <p id="mobile-hint" style="display: none; color: #f39c12;">📱 已为您开启移动端屏幕虚拟按键</p>
         </div>
     </div>
     <script src="script.js"></script>

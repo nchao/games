@@ -236,6 +236,11 @@ function draw() {
 
 document.addEventListener('keydown', (e) => {
     if (!isPlaying || isGameOver || changingDirection) return;
+    
+    // Prevent default scrolling
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+        e.preventDefault();
+    }
 
     switch (e.key) {
         case 'ArrowUp':
@@ -260,6 +265,35 @@ document.addEventListener('keydown', (e) => {
             break;
     }
 });
+
+// 添加移动端滑动支持
+let touchStartX = 0;
+let touchStartY = 0;
+canvas.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+    e.preventDefault();
+}, {passive: false});
+
+canvas.addEventListener('touchend', e => {
+    if (!isPlaying || isGameOver || changingDirection) return;
+    let touchEndX = e.changedTouches[0].screenX;
+    let touchEndY = e.changedTouches[0].screenY;
+    
+    let dx_touch = touchEndX - touchStartX;
+    let dy_touch = touchEndY - touchStartY;
+    
+    if (Math.abs(dx_touch) < 30 && Math.abs(dy_touch) < 30) return; 
+    
+    if (Math.abs(dx_touch) > Math.abs(dy_touch)) {
+        if (dx_touch > 0 && dx !== -1) { dx = 1; dy = 0; changingDirection = true; }
+        else if (dx_touch < 0 && dx !== 1) { dx = -1; dy = 0; changingDirection = true; }
+    } else {
+        if (dy_touch > 0 && dy !== -1) { dx = 0; dy = 1; changingDirection = true; }
+        else if (dy_touch < 0 && dy !== 1) { dx = 0; dy = -1; changingDirection = true; }
+    }
+    e.preventDefault();
+}, {passive: false});
 
 startBtn.addEventListener('click', () => {
     initGame();

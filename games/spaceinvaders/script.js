@@ -84,6 +84,28 @@ document.addEventListener('keyup', (e) => {
     if (e.code === 'Space') keys.Space = false;
 });
 
+// Mobile virtual buttons support
+if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    document.getElementById('mobile-controls').style.display = 'flex';
+    document.getElementById('mobile-hint').style.display = 'block';
+
+    const btnLeft = document.getElementById('btn-left');
+    const btnRight = document.getElementById('btn-right');
+    const btnShoot = document.getElementById('btn-shoot');
+
+    btnLeft.addEventListener('touchstart', (e) => { keys.ArrowLeft = true; e.preventDefault(); });
+    btnLeft.addEventListener('touchend', (e) => { keys.ArrowLeft = false; e.preventDefault(); });
+    
+    btnRight.addEventListener('touchstart', (e) => { keys.ArrowRight = true; e.preventDefault(); });
+    btnRight.addEventListener('touchend', (e) => { keys.ArrowRight = false; e.preventDefault(); });
+
+    btnShoot.addEventListener('touchstart', (e) => { 
+        if (!gameOver && !isWin) shoot(); 
+        if (gameOver || isWin) resetGame();
+        e.preventDefault(); 
+    });
+}
+
 // 射击功能
 function shoot() {
     bullets.push({

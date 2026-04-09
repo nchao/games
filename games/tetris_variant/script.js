@@ -447,5 +447,53 @@ document.addEventListener('keydown', e => {
     draw();
 });
 
+// Mobile touch controls
+if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    document.getElementById('mobile-controls').style.display = 'block';
+    
+    let dasTimeout = null;
+    let arrInterval = null;
+    const DAS = 150;
+    const ARR = 50;
+    
+    // Move functions
+    const handleMoveStart = (dir) => {
+        if (gameOver) return;
+        move(dir);
+        draw();
+        dasTimeout = setTimeout(() => {
+            arrInterval = setInterval(() => { move(dir); draw(); }, ARR);
+        }, DAS);
+    };
+    
+    const handleMoveEnd = () => {
+        clearTimeout(dasTimeout);
+        clearInterval(arrInterval);
+    };
+    
+    document.getElementById('btn-left').addEventListener('touchstart', (e) => { e.preventDefault(); handleMoveStart(-1); });
+    document.getElementById('btn-left').addEventListener('touchend', (e) => { e.preventDefault(); handleMoveEnd(); });
+    
+    document.getElementById('btn-right').addEventListener('touchstart', (e) => { e.preventDefault(); handleMoveStart(1); });
+    document.getElementById('btn-right').addEventListener('touchend', (e) => { e.preventDefault(); handleMoveEnd(); });
+    
+    let softDropInterval = null;
+    document.getElementById('btn-down').addEventListener('touchstart', (e) => { 
+        e.preventDefault(); 
+        if (gameOver) return;
+        softDrop(); draw();
+        softDropInterval = setInterval(() => { softDrop(); draw(); }, ARR);
+    });
+    document.getElementById('btn-down').addEventListener('touchend', (e) => { 
+        e.preventDefault(); 
+        clearInterval(softDropInterval); 
+    });
+    
+    document.getElementById('btn-drop').addEventListener('touchstart', (e) => { e.preventDefault(); if(!gameOver) { hardDrop(); draw(); } });
+    document.getElementById('btn-rot-right').addEventListener('touchstart', (e) => { e.preventDefault(); if(!gameOver) { rotate(1); draw(); } });
+    document.getElementById('btn-rot-left').addEventListener('touchstart', (e) => { e.preventDefault(); if(!gameOver) { rotate(-1); draw(); } });
+    document.getElementById('btn-hold').addEventListener('touchstart', (e) => { e.preventDefault(); if(!gameOver) { hold(); draw(); } });
+}
+
 // Start game
 resetGame();

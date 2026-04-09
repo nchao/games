@@ -95,22 +95,42 @@ canvas.addEventListener('mousemove', (e) => {
     mouseY = e.clientY - rect.top;
 });
 
+// Touch movement for aiming
+canvas.addEventListener('touchmove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.touches[0].clientX - rect.left;
+    mouseY = e.touches[0].clientY - rect.top;
+    e.preventDefault();
+}, {passive: false});
+
 // Click to shoot
 canvas.addEventListener('click', () => {
     if (currentBubble && !currentBubble.isFlying) {
-        const dx = mouseX - currentBubble.x;
-        const dy = mouseY - currentBubble.y;
-        const angle = Math.atan2(dy, dx);
-        const speed = 15;
-        
-        // Prevent shooting downwards or perfectly horizontal
-        if (angle > -0.1) return;
-        
-        currentBubble.vx = Math.cos(angle) * speed;
-        currentBubble.vy = Math.sin(angle) * speed;
-        currentBubble.isFlying = true;
+        shootBubble();
     }
 });
+
+// Touch end to shoot
+canvas.addEventListener('touchend', (e) => {
+    if (currentBubble && !currentBubble.isFlying) {
+        shootBubble();
+    }
+    e.preventDefault();
+}, {passive: false});
+
+function shootBubble() {
+    const dx = mouseX - currentBubble.x;
+    const dy = mouseY - currentBubble.y;
+    const angle = Math.atan2(dy, dx);
+    const speed = 15;
+    
+    // Prevent shooting downwards or perfectly horizontal
+    if (angle > -0.1) return;
+    
+    currentBubble.vx = Math.cos(angle) * speed;
+    currentBubble.vy = Math.sin(angle) * speed;
+    currentBubble.isFlying = true;
+}
 
 function update() {
     // Handle dropping bubbles animation
